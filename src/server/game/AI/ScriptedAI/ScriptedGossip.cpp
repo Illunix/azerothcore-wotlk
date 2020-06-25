@@ -42,6 +42,30 @@ void SendGossipMenuFor(Player* player, uint32 npcTextID, Creature const* creatur
         SendGossipMenuFor(player, npcTextID, creature->GetGUID());
 }
 
+void SendGossipMenu(Player* player, std::string titleText, uint64 objectGUID, uint32 titleTextId)
+{
+    auto data = WorldPacket(SMSG_NPC_TEXT_UPDATE, 100);
+    data << titleTextId;                                    
+
+    for (auto i = 0; i < 8; ++i)
+    {
+        data << float(0);
+        data << titleText;
+        data << titleText;
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+        data << uint32(0);
+    }
+
+    player->GetSession()->SendPacket(&data);
+
+    player->PlayerTalkClass->SendGossipMenu(titleTextId, objectGUID);
+}
+
 void CloseGossipMenuFor(Player* player)
 {
     player->PlayerTalkClass->SendCloseGossip();
